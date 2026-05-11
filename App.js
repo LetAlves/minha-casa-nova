@@ -1,11 +1,14 @@
 import React from 'react'
+import { View, ActivityIndicator } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Ionicons } from '@expo/vector-icons'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import { AppProvider } from './src/context/AppContext'
+import { AppProvider, useApp } from './src/context/AppContext'
+import { FIREBASE_CONFIGURED } from './src/firebase/config'
 import Toast from './src/components/ui/Toast'
+import LoginScreen from './src/screens/LoginScreen'
 import DashboardScreen from './src/screens/DashboardScreen'
 import ObraScreen from './src/screens/ObraScreen'
 import MoveisScreen from './src/screens/MoveisScreen'
@@ -28,28 +31,10 @@ function AppTabs() {
             height: 62,
             paddingBottom: 8,
           },
-          tabBarIcon: ({ focused, color, size }) => {
-            const icons = {
-              Início: 'home',
-              Obra: 'hammer',
-              Móveis: 'bed',
-              Chá: 'gift',
-              Gestão: 'clipboard',
-            }
-            const outlineIcons = {
-              Início: 'home-outline',
-              Obra: 'hammer-outline',
-              Móveis: 'bed-outline',
-              Chá: 'gift-outline',
-              Gestão: 'clipboard-outline',
-            }
-            return (
-              <Ionicons
-                name={focused ? icons[route.name] : outlineIcons[route.name]}
-                size={22}
-                color={color}
-              />
-            )
+          tabBarIcon: ({ focused, color }) => {
+            const icons = { Início: 'home', Obra: 'hammer', Móveis: 'bed', Chá: 'gift', Gestão: 'clipboard' }
+            const outline = { Início: 'home-outline', Obra: 'hammer-outline', Móveis: 'bed-outline', Chá: 'gift-outline', Gestão: 'clipboard-outline' }
+            return <Ionicons name={focused ? icons[route.name] : outline[route.name]} size={22} color={color} />
           },
         })}
       >
@@ -64,13 +49,40 @@ function AppTabs() {
   )
 }
 
+function AppContent() {
+  const { user, authLoading } = useApp()
+
+  if (authLoading) {
+    return (
+      <View style={{ flex: 1, backgroundColor: '#FAF7F2', alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator size="large" color="#E07A5F" />
+      </View>
+    )
+  }
+
+  if (FIREBASE_CONFIGURED && !user) {
+    return (
+      <>
+        <StatusBar style="dark" />
+        <LoginScreen />
+      </>
+    )
+  }
+
+  return (
+    <>
+      <StatusBar style="dark" />
+      <AppTabs />
+    </>
+  )
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
       <AppProvider>
         <NavigationContainer>
-          <StatusBar style="dark" />
-          <AppTabs />
+          <AppContent />
         </NavigationContainer>
       </AppProvider>
     </SafeAreaProvider>

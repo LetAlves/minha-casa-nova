@@ -141,7 +141,7 @@ export default function GestaoScreen() {
   const {
     orders, warranties, appointments, budget,
     saveOrders, saveWarranties, saveAppointments, saveBudget,
-    showToast, resetToInitial, loaded,
+    showToast, resetToInitial, loaded, user, logout,
   } = useApp()
 
   const [activeTab, setActiveTab] = useState(0)
@@ -503,6 +503,32 @@ export default function GestaoScreen() {
           >
             <Text style={{ fontSize: 13, fontWeight: '700', color: '#9CA3AF' }}>🔄 Redefinir dados de exemplo</Text>
           </TouchableOpacity>
+
+          {/* Conta */}
+          {user && (
+            <View style={{ backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: '#F3F4F6' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+                <Ionicons name="cloud-done-outline" size={16} color="#22C55E" />
+                <Text style={{ marginLeft: 8, fontSize: 13, color: '#6B7280' }}>
+                  Sincronizado como{' '}
+                  <Text style={{ fontWeight: '700', color: '#1F2937' }}>{user.email}</Text>
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={{ borderWidth: 1, borderColor: '#FCA5A5', borderRadius: 10, padding: 12, alignItems: 'center' }}
+                onPress={() => Alert.alert(
+                  'Sair da conta',
+                  'Seus dados continuarão salvos na nuvem. Deseja sair?',
+                  [
+                    { text: 'Cancelar', style: 'cancel' },
+                    { text: 'Sair', style: 'destructive', onPress: logout },
+                  ]
+                )}
+              >
+                <Text style={{ fontSize: 13, fontWeight: '700', color: '#EF4444' }}>Sair da conta</Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           {/* Phase breakdown */}
           <Text style={s.sectionTitle}>Por Fase</Text>
