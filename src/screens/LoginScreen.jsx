@@ -4,8 +4,7 @@ import {
   KeyboardAvoidingView, Platform, ActivityIndicator, Alert, ScrollView,
 } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../firebase/config'
+import { supabase } from '../supabase/config'
 import { useApp } from '../context/AppContext'
 
 export default function LoginScreen() {
@@ -29,24 +28,32 @@ export default function LoginScreen() {
     setLoading(true)
     try {
       if (isRegister) {
-        const cred = await createUserWithEmailAndPassword(auth, email.trim(), password)
-        await syncAllToFirestore(cred.user.uid)
-        showToast('Conta criada! Dados salvos na nuvem.', 'success')
+        const { data, error } = await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+        })
+        if (error) throw error
+        if (data.user) {
+          await syncAllToFirestore(data.user.id)
+          showToast('Conta criada! Dados salvos na nuvem.', 'success')
+        }
       } else {
-        await signInWithEmailAndPassword(auth, email.trim(), password)
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        })
+        if (error) throw error
         showToast('Bem-vinda de volta!', 'success')
       }
     } catch (e) {
-      const msgs = {
-        'auth/email-already-in-use': 'Este e-mail já está cadastrado.',
-        'auth/user-not-found': 'E-mail não encontrado.',
-        'auth/wrong-password': 'Senha incorreta.',
-        'auth/invalid-email': 'E-mail inválido.',
-        'auth/invalid-credential': 'E-mail ou senha incorretos.',
-        'auth/too-many-requests': 'Muitas tentativas. Aguarde e tente novamente.',
-        'auth/network-request-failed': 'Sem conexão com a internet.',
-      }
-      Alert.alert('Erro', msgs[e.code] || 'Ocorreu um erro. Tente novamente.')
+      const msg = e.message || ''
+      let friendly = 'Ocorreu um erro. Tente novamente.'
+      if (msg.includes('Invalid login credentials')) friendly = 'E-mail ou senha incorretos.'
+      else if (msg.includes('User already registered')) friendly = 'Este e-mail já está cadastrado.'
+      else if (msg.includes('Email not confirmed')) friendly = 'Confirme seu e-mail antes de entrar.'
+      else if (msg.includes('Password should be')) friendly = 'A senha deve ter pelo menos 6 caracteres.'
+      else if (msg.includes('Unable to validate') || msg.includes('network')) friendly = 'Sem conexão com a internet.'
+      Alert.alert('Erro', friendly)
     } finally {
       setLoading(false)
     }

@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { AppProvider, useApp } from './src/context/AppContext'
-import { FIREBASE_CONFIGURED } from './src/firebase/config'
+import { SUPABASE_CONFIGURED } from './src/supabase/config'
 import Toast from './src/components/ui/Toast'
 import LoginScreen from './src/screens/LoginScreen'
 import DashboardScreen from './src/screens/DashboardScreen'
@@ -60,7 +60,7 @@ function AppContent() {
     )
   }
 
-  if (FIREBASE_CONFIGURED && !user) {
+  if (SUPABASE_CONFIGURED && !user) {
     return (
       <>
         <StatusBar style="dark" />

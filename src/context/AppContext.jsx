@@ -2,37 +2,44 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { storage, KEYS } from '../storage/storage'
 import { INITIAL_DATA } from '../data/initialData'
-import { auth, db, FIREBASE_CONFIGURED } from '../firebase/config'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { doc, setDoc, getDoc } from 'firebase/firestore'
+import { supabase, SUPABASE_CONFIGURED } from '../supabase/config'
 
 const AppContext = createContext()
 
-const fsKey = (key) => key.replace('cn:', '')
+const dbKey = (key) => key.replace('cn:', '')
 
-const syncToCloud = async (uid, key, value) => {
-  if (!FIREBASE_CONFIGURED || !uid || !db) return
+const syncToCloud = async (userId, key, value) => {
+  if (!SUPABASE_CONFIGURED || !userId || !supabase) return
   try {
-    await setDoc(doc(db, 'users', uid, 'data', fsKey(key)), { value })
+    await supabase.from('user_data').upsert(
+      { user_id: userId, key: dbKey(key), value },
+      { onConflict: 'user_id,key' }
+    )
   } catch (e) {
-    console.log('[Firebase] sync error:', e.message)
+    console.log('[Supabase] sync error:', e.message)
   }
 }
 
-const loadFromCloud = async (uid, key) => {
-  if (!FIREBASE_CONFIGURED || !uid || !db) return null
+const loadFromCloud = async (userId, key) => {
+  if (!SUPABASE_CONFIGURED || !userId || !supabase) return null
   try {
-    const snap = await getDoc(doc(db, 'users', uid, 'data', fsKey(key)))
-    return snap.exists() ? snap.data().value : null
+    const { data, error } = await supabase
+      .from('user_data')
+      .select('value')
+      .eq('user_id', userId)
+      .eq('key', dbKey(key))
+      .single()
+    if (error || !data) return null
+    return data.value
   } catch (e) {
-    console.log('[Firebase] load error:', e.message)
+    console.log('[Supabase] load error:', e.message)
     return null
   }
 }
 
 export function AppProvider({ children }) {
   const [user, setUser] = useState(null)
-  const [authLoading, setAuthLoading] = useState(FIREBASE_CONFIGURED)
+  const [authLoading, setAuthLoading] = useState(SUPABASE_CONFIGURED)
 
   const [phases, setPhases] = useState(INITIAL_DATA.phases)
   const [items, setItems] = useState(INITIAL_DATA.items)
@@ -48,12 +55,19 @@ export function AppProvider({ children }) {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    if (!FIREBASE_CONFIGURED) return
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u)
+    if (!SUPABASE_CONFIGURED) return
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
       setAuthLoading(false)
     })
-    return unsub
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      setAuthLoading(false)
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
   useEffect(() => {
@@ -74,14 +88,13 @@ export function AppProvider({ children }) {
       let values
 
       if (user) {
-        const cloudResults = await Promise.all(allKeys.map(k => loadFromCloud(user.uid, k)))
+        const cloudResults = await Promise.all(allKeys.map(k => loadFromCloud(user.id, k)))
         const hasCloudData = cloudResults[0] !== null
 
         if (!hasCloudData) {
-          // Primeira vez — carrega do AsyncStorage e sobe para a nuvem
           const local = await Promise.all(allKeys.map((k, idx) => storage.get(k, defaults[idx])))
           values = local
-          await Promise.all(local.map((v, idx) => syncToCloud(user.uid, allKeys[idx], v)))
+          await Promise.all(local.map((v, idx) => syncToCloud(user.id, allKeys[idx], v)))
         } else {
           values = cloudResults.map((v, idx) => v ?? defaults[idx])
         }
@@ -90,28 +103,22 @@ export function AppProvider({ children }) {
       }
 
       if (!cancelled) {
-        setPhases(values[0])
-        setItems(values[1])
-        setGifts(values[2])
-        setGuests(values[3])
-        setProfessionals(values[4])
-        setOrders(values[5])
-        setWarranties(values[6])
-        setAppointments(values[7])
-        setBudget(values[8])
-        setTimeline(values[9])
+        setPhases(values[0]); setItems(values[1]); setGifts(values[2])
+        setGuests(values[3]); setProfessionals(values[4]); setOrders(values[5])
+        setWarranties(values[6]); setAppointments(values[7])
+        setBudget(values[8]); setTimeline(values[9])
         setLoaded(true)
       }
     }
 
     load()
     return () => { cancelled = true }
-  }, [authLoading, user?.uid])
+  }, [authLoading, user?.id])
 
   const makeSave = (setter, key) => (v) => {
     setter(v)
     storage.set(key, v)
-    if (user) syncToCloud(user.uid, key, v)
+    if (user) syncToCloud(user.id, key, v)
   }
 
   const savePhases = makeSave(setPhases, KEYS.phases)
@@ -149,8 +156,8 @@ export function AppProvider({ children }) {
   }
 
   const syncAllToFirestore = async (uid) => {
-    if (!FIREBASE_CONFIGURED) return
-    const targetUid = uid || user?.uid
+    if (!SUPABASE_CONFIGURED) return
+    const targetUid = uid || user?.id
     if (!targetUid) return
     const allKeys = Object.values(KEYS)
     const allValues = [phases, items, gifts, guests, professionals, orders, warranties, appointments, budget, timeline]
@@ -171,13 +178,13 @@ export function AppProvider({ children }) {
     setBudget(defaults[8]); setTimeline(defaults[9])
     if (user) {
       const allKeys = Object.values(KEYS)
-      await Promise.all(defaults.map((v, idx) => syncToCloud(user.uid, allKeys[idx], v)))
+      await Promise.all(defaults.map((v, idx) => syncToCloud(user.id, allKeys[idx], v)))
     }
   }
 
   const logout = async () => {
-    if (!FIREBASE_CONFIGURED || !auth) return
-    try { await signOut(auth) } catch (e) { console.log('Logout error:', e) }
+    if (!SUPABASE_CONFIGURED || !supabase) return
+    try { await supabase.auth.signOut() } catch (e) { console.log('Logout error:', e) }
   }
 
   const showToast = (message, type = 'success') => {
