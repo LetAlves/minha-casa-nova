@@ -28,6 +28,135 @@ const EMPTY_ITEM = {
 
 const EMPTY_PROF = { name: '', specialty: '', phone: '', rating: 5, notes: '' }
 
+function CalcPisoModal({ calcFloor, setCalcFloor, calcRooms, addCalcRoom, removeCalcRoom, updateCalcRoom, onSave, onPickImage }) {
+  const totalArea = calcRooms.reduce((sum, r) => sum + (parseFloat(r.width) || 0) * (parseFloat(r.length) || 0), 0)
+  const wasteFactor = 1 + (parseFloat(calcFloor.waste) || 10) / 100
+  const totalWithWaste = totalArea * wasteFactor
+  const totalCost = totalWithWaste * (parseFloat(calcFloor.pricePerM2) || 0)
+
+  return (
+    <View style={{ paddingBottom: 24 }}>
+      <Text style={s.label}>Nome do piso</Text>
+      <TextInput
+        style={s.input}
+        value={calcFloor.name}
+        onChangeText={v => setCalcFloor(f => ({ ...f, name: v }))}
+        placeholder="Ex: Porcelanato 60x60 Branco"
+        placeholderTextColor="#9CA3AF"
+      />
+
+      <Text style={s.label}>Foto do piso</Text>
+      <TouchableOpacity onPress={onPickImage} style={s.calcImgBtn}>
+        {calcFloor.image
+          ? <Image source={{ uri: calcFloor.image }} style={{ width: 90, height: 90, borderRadius: 10 }} />
+          : (
+            <View style={{ alignItems: 'center', gap: 4 }}>
+              <Ionicons name="camera-outline" size={28} color="#9CA3AF" />
+              <Text style={{ fontSize: 11, color: '#9CA3AF' }}>Adicionar foto</Text>
+            </View>
+          )
+        }
+      </TouchableOpacity>
+
+      <View style={{ flexDirection: 'row', gap: 12 }}>
+        <View style={{ flex: 1 }}>
+          <Text style={s.label}>Preço por m² (R$)</Text>
+          <TextInput
+            style={s.input}
+            value={calcFloor.pricePerM2}
+            onChangeText={v => setCalcFloor(f => ({ ...f, pricePerM2: v }))}
+            placeholder="0,00"
+            placeholderTextColor="#9CA3AF"
+            keyboardType="decimal-pad"
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={s.label}>Perda (%)</Text>
+          <TextInput
+            style={s.input}
+            value={calcFloor.waste}
+            onChangeText={v => setCalcFloor(f => ({ ...f, waste: v }))}
+            placeholder="10"
+            placeholderTextColor="#9CA3AF"
+            keyboardType="decimal-pad"
+          />
+        </View>
+      </View>
+
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, marginBottom: 8 }}>
+        <Text style={s.sectionTitle}>Cômodos</Text>
+        <TouchableOpacity onPress={addCalcRoom} style={s.addSmallBtn}>
+          <Ionicons name="add" size={18} color="#E07A5F" />
+          <Text style={{ color: '#E07A5F', fontWeight: '700', fontSize: 13 }}>Cômodo</Text>
+        </TouchableOpacity>
+      </View>
+
+      {calcRooms.map((room, idx) => {
+        const area = (parseFloat(room.width) || 0) * (parseFloat(room.length) || 0)
+        return (
+          <View key={room.id} style={s.calcRoomCard}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <TextInput
+                style={{ flex: 1, fontSize: 14, fontWeight: '700', color: '#1F2937' }}
+                value={room.name}
+                onChangeText={v => updateCalcRoom(room.id, 'name', v)}
+                placeholder={`Cômodo ${idx + 1}`}
+                placeholderTextColor="#9CA3AF"
+              />
+              {calcRooms.length > 1 && (
+                <TouchableOpacity onPress={() => removeCalcRoom(room.id)} style={{ padding: 4 }}>
+                  <Ionicons name="trash-outline" size={16} color="#EF4444" />
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-end' }}>
+              <View style={{ flex: 1 }}>
+                <Text style={s.calcRoomLabel}>Largura (m)</Text>
+                <TextInput style={[s.input, { height: 42 }]} value={room.width} onChangeText={v => updateCalcRoom(room.id, 'width', v)} placeholder="0,00" placeholderTextColor="#9CA3AF" keyboardType="decimal-pad" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={s.calcRoomLabel}>Comprimento (m)</Text>
+                <TextInput style={[s.input, { height: 42 }]} value={room.length} onChangeText={v => updateCalcRoom(room.id, 'length', v)} placeholder="0,00" placeholderTextColor="#9CA3AF" keyboardType="decimal-pad" />
+              </View>
+              <View style={{ alignItems: 'flex-end', paddingBottom: 10 }}>
+                <Text style={s.calcRoomLabel}>Área</Text>
+                <Text style={{ fontWeight: '800', color: '#E07A5F', fontSize: 15 }}>{area.toFixed(2)} m²</Text>
+              </View>
+            </View>
+          </View>
+        )
+      })}
+
+      {/* Resultado */}
+      <View style={s.calcResult}>
+        <View style={s.calcResultRow}>
+          <Text style={s.calcResultLabel}>Área total dos cômodos</Text>
+          <Text style={s.calcResultVal}>{totalArea.toFixed(2)} m²</Text>
+        </View>
+        <View style={s.calcResultRow}>
+          <Text style={s.calcResultLabel}>Com {calcFloor.waste || 10}% de perda</Text>
+          <Text style={[s.calcResultVal, { color: '#F2A65A' }]}>{totalWithWaste.toFixed(2)} m²</Text>
+        </View>
+        <View style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.15)', marginVertical: 8 }} />
+        <View style={s.calcResultRow}>
+          <Text style={[s.calcResultLabel, { fontSize: 15 }]}>Total estimado</Text>
+          <Text style={[s.calcResultVal, { color: '#E07A5F', fontSize: 22, fontWeight: '900' }]}>
+            {formatCurrency(totalCost)}
+          </Text>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        style={[s.saveBtn, { marginTop: 16 }]}
+        onPress={() => onSave(totalWithWaste, totalCost)}
+        activeOpacity={0.8}
+      >
+        <Text style={s.saveBtnTxt}>Salvar como item da fase</Text>
+      </TouchableOpacity>
+    </View>
+  )
+}
+
 function ObraItemForm({ form, setForm, onSave, onAddPhoto }) {
   return (
     <View style={{ paddingBottom: 20 }}>
@@ -95,9 +224,12 @@ export default function ObraScreen() {
   const [editModal, setEditModal] = useState(false)
   const [addModal, setAddModal] = useState(false)
   const [profModal, setProfModal] = useState(false)
+  const [calcModal, setCalcModal] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
   const [form, setForm] = useState(EMPTY_ITEM)
   const [profForm, setProfForm] = useState(EMPTY_PROF)
+  const [calcFloor, setCalcFloor] = useState({ name: '', image: null, pricePerM2: '', waste: '10' })
+  const [calcRooms, setCalcRooms] = useState([{ id: '1', name: '', width: '', length: '' }])
 
   if (!loaded) {
     return (
@@ -191,6 +323,43 @@ export default function ObraScreen() {
     showToast('Profissional adicionado!')
     setProfModal(false)
     setProfForm(EMPTY_PROF)
+  }
+
+  const openCalc = () => {
+    setCalcFloor({ name: '', image: null, pricePerM2: '', waste: '10' })
+    setCalcRooms([{ id: '1', name: '', width: '', length: '' }])
+    setCalcModal(true)
+  }
+
+  const addCalcRoom = () => {
+    setCalcRooms(r => [...r, { id: String(Date.now()), name: '', width: '', length: '' }])
+  }
+
+  const removeCalcRoom = (id) => {
+    if (calcRooms.length === 1) return
+    setCalcRooms(r => r.filter(room => room.id !== id))
+  }
+
+  const updateCalcRoom = (id, field, value) => {
+    setCalcRooms(r => r.map(room => room.id === id ? { ...room, [field]: value } : room))
+  }
+
+  const handleSaveCalc = (totalWithWaste, totalCost) => {
+    const name = calcFloor.name.trim() || 'Piso'
+    const waste = calcFloor.waste || '10'
+    const newItem = {
+      id: `${currentPhase.id}_${Date.now()}`,
+      name,
+      status: 'nao_iniciado',
+      contractValue: Math.ceil(totalCost),
+      paidValue: 0,
+      notes: `${totalWithWaste.toFixed(2)} m² necessários (+${waste}% de perda) · R$${calcFloor.pricePerM2}/m²`,
+      photos: calcFloor.image ? [calcFloor.image] : [],
+      responsible: '', contact: '', startDate: '', endDate: '',
+    }
+    addPhaseItem(currentPhase.id, newItem)
+    showToast('Piso salvo como item!')
+    setCalcModal(false)
   }
 
   const handleDeleteProf = (id) => {
@@ -321,6 +490,12 @@ export default function ObraScreen() {
 
         {/* Items list */}
         <View style={{ paddingHorizontal: 16, marginTop: 12 }}>
+          <TouchableOpacity style={s.calcBtn} onPress={openCalc}>
+            <Ionicons name="calculator-outline" size={18} color="#E07A5F" />
+            <Text style={s.calcBtnTxt}>Calculadora de Piso</Text>
+            <Ionicons name="chevron-forward" size={16} color="#E07A5F" style={{ marginLeft: 'auto' }} />
+          </TouchableOpacity>
+
           {currentPhase.items.length === 0 ? (
             <EmptyState icon="🔨" title="Nenhum item nesta fase" message="Toque no + para adicionar um item." />
           ) : (
@@ -403,6 +578,20 @@ export default function ObraScreen() {
         <ObraItemForm form={form} setForm={setForm} onSave={handleSaveItem} onAddPhoto={handleAddPhoto} />
       </BaseModal>
 
+      {/* Calculadora de piso */}
+      <BaseModal visible={calcModal} onClose={() => setCalcModal(false)} title="Calculadora de Piso">
+        <CalcPisoModal
+          calcFloor={calcFloor}
+          setCalcFloor={setCalcFloor}
+          calcRooms={calcRooms}
+          addCalcRoom={addCalcRoom}
+          removeCalcRoom={removeCalcRoom}
+          updateCalcRoom={updateCalcRoom}
+          onSave={handleSaveCalc}
+          onPickImage={() => pickImage(uri => setCalcFloor(f => ({ ...f, image: uri })))}
+        />
+      </BaseModal>
+
       {/* Add professional modal */}
       <BaseModal visible={profModal} onClose={() => setProfModal(false)} title="Novo Profissional">
         <View style={{ paddingBottom: 20 }}>
@@ -454,4 +643,13 @@ const s = StyleSheet.create({
   saveBtn: { backgroundColor: '#E07A5F', borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 8 },
   saveBtnTxt: { color: '#fff', fontWeight: '800', fontSize: 16 },
   addPhotoBtn: { width: 70, height: 70, borderRadius: 8, borderWidth: 2, borderColor: '#E07A5F', borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
+  calcBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#FFF5F2', borderRadius: 12, padding: 14, marginBottom: 14, borderWidth: 1, borderColor: '#FDDDD6' },
+  calcBtnTxt: { color: '#E07A5F', fontWeight: '700', fontSize: 14, flex: 1 },
+  calcImgBtn: { width: 90, height: 90, borderRadius: 10, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center', marginBottom: 14, overflow: 'hidden' },
+  calcRoomCard: { backgroundColor: '#F9FAFB', borderRadius: 12, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: '#E5E7EB' },
+  calcRoomLabel: { fontSize: 11, color: '#6B7280', marginBottom: 4, fontWeight: '600' },
+  calcResult: { backgroundColor: '#1F2937', borderRadius: 14, padding: 16, marginTop: 10 },
+  calcResultRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  calcResultLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 13 },
+  calcResultVal: { color: '#fff', fontWeight: '700', fontSize: 15 },
 })
