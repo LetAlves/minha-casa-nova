@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
-  View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity,
+  View, Text, ScrollView, StyleSheet, ActivityIndicator,
+  TouchableOpacity, TextInput, Alert,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { Ionicons } from '@expo/vector-icons'
 import { useApp } from '../context/AppContext'
 import ProgressBar from '../components/ui/ProgressBar'
+import BaseModal from '../components/modals/BaseModal'
 import { calcPhaseProgress, calcOverallBudget } from '../utils/budget'
 import { formatDate, formatCurrency, isOverdue, daysUntil } from '../utils/dates'
 
@@ -15,8 +18,26 @@ const PHASE_NAMES = {
 }
 const PHASE_ICONS = { 1: '🏗️', 2: '🪣', 3: '🪚', 4: '🔧', 5: '🛋️', 6: '🍳', 7: '🖼️' }
 
+const toDisplay = (iso) => {
+  if (!iso) return ''
+  const [y, m, d] = iso.split('-')
+  return `${d}/${m}/${y}`
+}
+
+const toISO = (display) => {
+  const parts = display.replace(/\s/g, '').split('/')
+  if (parts.length !== 3) return null
+  const [d, m, y] = parts
+  if (y.length !== 4) return null
+  const date = new Date(`${y}-${m}-${d}`)
+  if (isNaN(date.getTime())) return null
+  return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`
+}
+
 export default function DashboardScreen() {
-  const { phases, items, budget, timeline, loaded } = useApp()
+  const { phases, items, budget, timeline, loaded, saveTimeline, showToast } = useApp()
+  const [editModal, setEditModal] = useState(false)
+  const [form, setForm] = useState({ startDate: '', targetDate: '' })
 
   if (!loaded) {
     return (
@@ -26,69 +47,68 @@ export default function DashboardScreen() {
     )
   }
 
+  const openEdit = () => {
+    setForm({
+      startDate: toDisplay(timeline.startDate),
+      targetDate: toDisplay(timeline.targetDate),
+    })
+    setEditModal(true)
+  }
+
+  const handleSave = () => {
+    const startISO = toISO(form.startDate)
+    const targetISO = toISO(form.targetDate)
+    if (!startISO) { Alert.alert('Data inválida', 'Informe a data de início no formato DD/MM/AAAA.'); return }
+    if (!targetISO) { Alert.alert('Data inválida', 'Informe a data meta no formato DD/MM/AAAA.'); return }
+    if (new Date(targetISO) <= new Date(startISO)) {
+      Alert.alert('Data inválida', 'A meta deve ser depois da data de início.')
+      return
+    }
+    saveTimeline({ ...timeline, startDate: startISO, targetDate: targetISO })
+    showToast('Datas atualizadas!')
+    setEditModal(false)
+  }
+
   // Build 7 phase summaries
   const phaseData = []
-
-  // Construction phases 1-4
   phases.forEach(ph => {
     const prog = calcPhaseProgress(ph)
     phaseData.push({
-      phase: ph.phase,
-      name: ph.name,
-      icon: ph.icon,
+      phase: ph.phase, name: ph.name, icon: ph.icon,
       color: PHASE_COLORS[ph.phase - 1],
-      percent: prog.percent,
-      done: prog.done,
-      total: prog.total,
+      percent: prog.percent, done: prog.done, total: prog.total,
     })
   })
-
-  // Item phases 5-7
   ;[5, 6, 7].forEach(p => {
     const phItems = items.filter(i => i.phase === p)
     const total = phItems.length
     const done = phItems.filter(i => i.status === 'comprado' || i.status === 'entregue').length
     const percent = total > 0 ? Math.round((done / total) * 100) : 0
-    phaseData.push({
-      phase: p,
-      name: PHASE_NAMES[p],
-      icon: PHASE_ICONS[p],
-      color: PHASE_COLORS[p - 1],
-      percent,
-      done,
-      total,
-    })
+    phaseData.push({ phase: p, name: PHASE_NAMES[p], icon: PHASE_ICONS[p], color: PHASE_COLORS[p - 1], percent, done, total })
   })
-
   phaseData.sort((a, b) => a.phase - b.phase)
 
-  // Overall progress
   const allItems = phases.flatMap(ph => ph.items)
   const allTotal = allItems.length + items.length
   const allDone = allItems.filter(i => i.status === 'concluido').length +
     items.filter(i => i.status === 'comprado' || i.status === 'entregue').length
   const overallPercent = allTotal > 0 ? Math.round((allDone / allTotal) * 100) : 0
 
-  // Budget
   const budgetSummary = calcOverallBudget(budget)
 
-  // Alerts: overdue items
   const overdueItems = []
   phases.forEach(ph => {
     ph.items.forEach(it => {
-      if (it.status !== 'concluido' && it.endDate && isOverdue(it.endDate)) {
+      if (it.status !== 'concluido' && it.endDate && isOverdue(it.endDate))
         overdueItems.push({ ...it, phaseName: ph.name })
-      }
     })
   })
 
-  // Next 3 pending tasks
   const pendingTasks = phases
     .flatMap(ph => ph.items.filter(i => i.status === 'nao_iniciado' && i.endDate).map(i => ({ ...i, phaseName: ph.name })))
     .sort((a, b) => new Date(a.endDate) - new Date(b.endDate))
     .slice(0, 3)
 
-  // Days progress on timeline
   const start = new Date(timeline.startDate)
   const end = new Date(timeline.targetDate)
   const now = new Date()
@@ -100,12 +120,19 @@ export default function DashboardScreen() {
   return (
     <SafeAreaView style={s.container} edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
+
         {/* Header */}
         <View style={s.header}>
           <Text style={s.headerTitle}>🏠 Minha Casa Nova</Text>
-          <View style={s.headerDates}>
-            <Text style={s.headerDate}>Início: {formatDate(timeline.startDate)}</Text>
-            <Text style={s.headerDate}>Meta: {formatDate(timeline.targetDate)}</Text>
+          <View style={s.headerDatesRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={s.headerDate}>Início: {formatDate(timeline.startDate)}</Text>
+              <Text style={s.headerDate}>Meta: {formatDate(timeline.targetDate)}</Text>
+            </View>
+            <TouchableOpacity onPress={openEdit} style={s.editDateBtn}>
+              <Ionicons name="pencil" size={14} color="#E07A5F" />
+              <Text style={s.editDateTxt}>Editar</Text>
+            </TouchableOpacity>
           </View>
           {daysLeft !== null && (
             <View style={s.daysLeftBadge}>
@@ -204,6 +231,37 @@ export default function DashboardScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* Modal editar datas */}
+      <BaseModal visible={editModal} onClose={() => setEditModal(false)} title="Editar datas do projeto">
+        <View style={{ paddingBottom: 16 }}>
+          <Text style={s.label}>Data de início</Text>
+          <TextInput
+            style={s.input}
+            value={form.startDate}
+            onChangeText={v => setForm(f => ({ ...f, startDate: v }))}
+            placeholder="DD/MM/AAAA"
+            placeholderTextColor="#9CA3AF"
+            keyboardType="numeric"
+            maxLength={10}
+          />
+
+          <Text style={s.label}>Meta de conclusão</Text>
+          <TextInput
+            style={s.input}
+            value={form.targetDate}
+            onChangeText={v => setForm(f => ({ ...f, targetDate: v }))}
+            placeholder="DD/MM/AAAA"
+            placeholderTextColor="#9CA3AF"
+            keyboardType="numeric"
+            maxLength={10}
+          />
+
+          <TouchableOpacity style={s.saveBtn} onPress={handleSave} activeOpacity={0.8}>
+            <Text style={s.saveBtnTxt}>Salvar</Text>
+          </TouchableOpacity>
+        </View>
+      </BaseModal>
     </SafeAreaView>
   )
 }
@@ -211,9 +269,14 @@ export default function DashboardScreen() {
 const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FAF7F2' },
   header: { backgroundColor: '#E07A5F', padding: 20, paddingTop: 12 },
-  headerTitle: { fontSize: 24, fontWeight: '900', color: '#fff', marginBottom: 6 },
-  headerDates: { flexDirection: 'row', gap: 16, marginBottom: 8 },
-  headerDate: { color: 'rgba(255,255,255,0.85)', fontSize: 13 },
+  headerTitle: { fontSize: 24, fontWeight: '900', color: '#fff', marginBottom: 8 },
+  headerDatesRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+  headerDate: { color: 'rgba(255,255,255,0.9)', fontSize: 13, marginBottom: 2 },
+  editDateBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6,
+  },
+  editDateTxt: { fontSize: 12, fontWeight: '700', color: '#E07A5F' },
   daysLeftBadge: { backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4, alignSelf: 'flex-start' },
   daysLeftTxt: { color: '#fff', fontWeight: '700', fontSize: 13 },
   card: { backgroundColor: '#fff', borderRadius: 14, padding: 14, marginHorizontal: 16, marginBottom: 12, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 4 },
@@ -234,4 +297,14 @@ const s = StyleSheet.create({
   taskSub: { fontSize: 12, color: '#6B7280', marginTop: 2 },
   daysBadge: { borderRadius: 20, paddingHorizontal: 10, paddingVertical: 4 },
   daysBadgeTxt: { fontSize: 12, fontWeight: '700' },
+  label: { fontSize: 13, fontWeight: '700', color: '#374151', marginBottom: 6, marginTop: 12 },
+  input: {
+    backgroundColor: '#F9FAFB', borderWidth: 1, borderColor: '#E5E7EB',
+    borderRadius: 10, paddingHorizontal: 14, height: 48, fontSize: 15, color: '#1F2937',
+  },
+  saveBtn: {
+    backgroundColor: '#E07A5F', borderRadius: 12, height: 50,
+    alignItems: 'center', justifyContent: 'center', marginTop: 20,
+  },
+  saveBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 16 },
 })
