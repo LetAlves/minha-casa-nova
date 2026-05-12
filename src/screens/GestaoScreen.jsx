@@ -141,7 +141,7 @@ export default function GestaoScreen() {
   const {
     orders, warranties, appointments, budget,
     saveOrders, saveWarranties, saveAppointments, saveBudget,
-    showToast, resetToInitial, loaded, user, logout,
+    showToast, resetToInitial, loaded, user, logout, pendingCount,
   } = useApp()
 
   const [activeTab, setActiveTab] = useState(0)
@@ -507,8 +507,16 @@ export default function GestaoScreen() {
           {/* Conta */}
           {user && (
             <View style={{ backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 20, borderWidth: 1, borderColor: '#F3F4F6' }}>
+              {pendingCount > 0 && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#FEF3C7', borderRadius: 8, padding: 10, marginBottom: 12 }}>
+                  <Ionicons name="cloud-upload-outline" size={15} color="#D97706" />
+                  <Text style={{ fontSize: 12, color: '#D97706', fontWeight: '600', flex: 1 }}>
+                    {pendingCount} {pendingCount === 1 ? 'alteração pendente' : 'alterações pendentes'} — sincronizará quando online
+                  </Text>
+                </View>
+              )}
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-                <Ionicons name="cloud-done-outline" size={16} color="#22C55E" />
+                <Ionicons name={pendingCount > 0 ? 'cloud-offline-outline' : 'cloud-done-outline'} size={16} color={pendingCount > 0 ? '#D97706' : '#22C55E'} />
                 <Text style={{ marginLeft: 8, fontSize: 13, color: '#6B7280' }}>
                   Sincronizado como{' '}
                   <Text style={{ fontWeight: '700', color: '#1F2937' }}>{user.email}</Text>

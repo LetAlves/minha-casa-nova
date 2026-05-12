@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
+import { AppState } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { storage, KEYS } from '../storage/storage'
 import { INITIAL_DATA } from '../data/initialData'
@@ -6,17 +7,43 @@ import { supabase, SUPABASE_CONFIGURED } from '../supabase/config'
 
 const AppContext = createContext()
 
+const PENDING_KEY = 'cn:pending_sync'
+
 const dbKey = (key) => key.replace('cn:', '')
+
+// Adiciona à fila de pendentes quando offline
+const enqueuePending = async (userId, key, value) => {
+  try {
+    const raw = await AsyncStorage.getItem(PENDING_KEY)
+    const queue = raw ? JSON.parse(raw) : {}
+    queue[`${userId}:${dbKey(key)}`] = { userId, key, value }
+    await AsyncStorage.setItem(PENDING_KEY, JSON.stringify(queue))
+  } catch {}
+}
+
+// Remove da fila após sincronizar com sucesso
+const dequeuePending = async (userId, key) => {
+  try {
+    const raw = await AsyncStorage.getItem(PENDING_KEY)
+    if (!raw) return
+    const queue = JSON.parse(raw)
+    delete queue[`${userId}:${dbKey(key)}`]
+    await AsyncStorage.setItem(PENDING_KEY, JSON.stringify(queue))
+  } catch {}
+}
 
 const syncToCloud = async (userId, key, value) => {
   if (!SUPABASE_CONFIGURED || !userId || !supabase) return
   try {
-    await supabase.from('user_data').upsert(
+    const { error } = await supabase.from('user_data').upsert(
       { user_id: userId, key: dbKey(key), value },
       { onConflict: 'user_id,key' }
     )
+    if (error) throw error
+    await dequeuePending(userId, key)
   } catch (e) {
-    console.log('[Supabase] sync error:', e.message)
+    // Offline ou erro — guarda na fila para sincronizar depois
+    await enqueuePending(userId, key, value)
   }
 }
 
@@ -31,15 +58,58 @@ const loadFromCloud = async (userId, key) => {
       .single()
     if (error || !data) return null
     return data.value
-  } catch (e) {
-    console.log('[Supabase] load error:', e.message)
+  } catch {
     return null
+  }
+}
+
+// Tenta enviar todos os itens pendentes ao Supabase
+const flushPendingQueue = async (userId, onCountChange) => {
+  if (!SUPABASE_CONFIGURED || !userId || !supabase) return
+  try {
+    const raw = await AsyncStorage.getItem(PENDING_KEY)
+    if (!raw) { onCountChange?.(0); return }
+    const queue = JSON.parse(raw)
+    const myItems = Object.values(queue).filter(item => item.userId === userId)
+    if (myItems.length === 0) { onCountChange?.(0); return }
+
+    const results = await Promise.allSettled(
+      myItems.map(item =>
+        supabase.from('user_data').upsert(
+          { user_id: item.userId, key: dbKey(item.key), value: item.value },
+          { onConflict: 'user_id,key' }
+        )
+      )
+    )
+
+    const newQueue = { ...queue }
+    results.forEach((result, idx) => {
+      if (result.status === 'fulfilled' && !result.value?.error) {
+        delete newQueue[`${myItems[idx].userId}:${dbKey(myItems[idx].key)}`]
+      }
+    })
+
+    await AsyncStorage.setItem(PENDING_KEY, JSON.stringify(newQueue))
+    const remaining = Object.values(newQueue).filter(i => i.userId === userId).length
+    onCountChange?.(remaining)
+  } catch {}
+}
+
+const countPending = async (userId) => {
+  try {
+    const raw = await AsyncStorage.getItem(PENDING_KEY)
+    if (!raw) return 0
+    const queue = JSON.parse(raw)
+    return Object.values(queue).filter(i => i.userId === userId).length
+  } catch {
+    return 0
   }
 }
 
 export function AppProvider({ children }) {
   const [user, setUser] = useState(null)
   const [authLoading, setAuthLoading] = useState(SUPABASE_CONFIGURED)
+  const [pendingCount, setPendingCount] = useState(0)
 
   const [phases, setPhases] = useState(INITIAL_DATA.phases)
   const [items, setItems] = useState(INITIAL_DATA.items)
@@ -54,6 +124,10 @@ export function AppProvider({ children }) {
   const [toast, setToast] = useState(null)
   const [loaded, setLoaded] = useState(false)
 
+  const userRef = useRef(null)
+  userRef.current = user
+
+  // Auth listener
   useEffect(() => {
     if (!SUPABASE_CONFIGURED) return
 
@@ -70,6 +144,34 @@ export function AppProvider({ children }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  // Sincroniza pendentes quando o app volta ao primeiro plano
+  useEffect(() => {
+    if (!user) return
+
+    const tryFlush = () => {
+      flushPendingQueue(user.id, setPendingCount)
+    }
+
+    // Tenta ao logar
+    tryFlush()
+
+    // Tenta toda vez que o app sair do background
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') tryFlush()
+    })
+
+    return () => sub.remove()
+  }, [user?.id])
+
+  // Atualiza contagem de pendentes ao salvar algo
+  const updatePendingCount = async () => {
+    if (userRef.current) {
+      const count = await countPending(userRef.current.id)
+      setPendingCount(count)
+    }
+  }
+
+  // Carrega dados
   useEffect(() => {
     if (authLoading) return
 
@@ -118,7 +220,9 @@ export function AppProvider({ children }) {
   const makeSave = (setter, key) => (v) => {
     setter(v)
     storage.set(key, v)
-    if (user) syncToCloud(user.id, key, v)
+    if (userRef.current) {
+      syncToCloud(userRef.current.id, key, v).then(updatePendingCount)
+    }
   }
 
   const savePhases = makeSave(setPhases, KEYS.phases)
@@ -162,6 +266,7 @@ export function AppProvider({ children }) {
     const allKeys = Object.values(KEYS)
     const allValues = [phases, items, gifts, guests, professionals, orders, warranties, appointments, budget, timeline]
     await Promise.all(allValues.map((v, idx) => syncToCloud(targetUid, allKeys[idx], v)))
+    await updatePendingCount()
   }
 
   const resetToInitial = async () => {
@@ -184,6 +289,7 @@ export function AppProvider({ children }) {
 
   const logout = async () => {
     if (!SUPABASE_CONFIGURED || !supabase) return
+    setPendingCount(0)
     try { await supabase.auth.signOut() } catch (e) { console.log('Logout error:', e) }
   }
 
@@ -196,7 +302,7 @@ export function AppProvider({ children }) {
     <AppContext.Provider value={{
       phases, items, gifts, guests, professionals,
       orders, warranties, appointments, budget, timeline,
-      loaded, toast, user, authLoading,
+      loaded, toast, user, authLoading, pendingCount,
       savePhases, saveItems, saveGifts, saveGuests, saveProfessionals,
       saveOrders, saveWarranties, saveAppointments, saveBudget, saveTimeline,
       updatePhaseItem, addPhaseItem, deletePhaseItem,
