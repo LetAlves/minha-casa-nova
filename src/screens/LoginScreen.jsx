@@ -15,6 +15,29 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
 
+  const handleForgotPassword = () => {
+    Alert.prompt(
+      'Esqueci minha senha',
+      'Digite seu e-mail para receber o link de redefinição:',
+      async (inputEmail) => {
+        if (!inputEmail?.trim()) return
+        setLoading(true)
+        try {
+          const { error } = await supabase.auth.resetPasswordForEmail(inputEmail.trim())
+          if (error) throw error
+          Alert.alert('E-mail enviado!', 'Verifique sua caixa de entrada e clique no link para redefinir sua senha.')
+        } catch (e) {
+          Alert.alert('Erro', e.message || 'Não foi possível enviar o e-mail.')
+        } finally {
+          setLoading(false)
+        }
+      },
+      'plain-text',
+      email,
+      'email-address'
+    )
+  }
+
   const handleSubmit = async () => {
     if (!email.trim() || !password.trim()) {
       Alert.alert('Campos obrigatórios', 'Preencha e-mail e senha.')
@@ -47,7 +70,7 @@ export default function LoginScreen() {
       }
     } catch (e) {
       const msg = e.message || ''
-      let friendly = 'Ocorreu um erro. Tente novamente.'
+      let friendly = msg || 'Ocorreu um erro. Tente novamente.'
       if (msg.includes('Invalid login credentials')) friendly = 'E-mail ou senha incorretos.'
       else if (msg.includes('User already registered')) friendly = 'Este e-mail já está cadastrado.'
       else if (msg.includes('Email not confirmed')) friendly = 'Confirme seu e-mail antes de entrar.'
@@ -126,6 +149,12 @@ export default function LoginScreen() {
               <Text style={s.toggleLink}>{isRegister ? ' Entrar' : ' Criar conta'}</Text>
             </TouchableOpacity>
           </View>
+
+          {!isRegister && (
+            <TouchableOpacity onPress={handleForgotPassword} style={s.forgotBtn}>
+              <Text style={s.forgotTxt}>Esqueci minha senha</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={s.footer}>
@@ -175,6 +204,8 @@ const s = StyleSheet.create({
   toggleRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20 },
   toggleTxt: { fontSize: 14, color: '#6B7280' },
   toggleLink: { fontSize: 14, fontWeight: '700', color: '#E07A5F' },
+  forgotBtn: { alignItems: 'center', marginTop: 12 },
+  forgotTxt: { fontSize: 13, color: '#9CA3AF', textDecorationLine: 'underline' },
   footer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 32 },
   footerTxt: { fontSize: 12, color: '#9CA3AF' },
 })
