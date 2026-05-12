@@ -11,6 +11,7 @@ import Badge from '../components/ui/Badge'
 import BaseModal from '../components/modals/BaseModal'
 import EmptyState from '../components/ui/EmptyState'
 import { formatCurrency } from '../utils/dates'
+import { getMercadoLivreUrl, getStoreSearchUrl } from '../utils/affiliateLinks'
 
 const ROOMS = ['Todos', 'Sala', 'Quarto', 'Cozinha', 'Banheiro', 'Escritório', 'Área de Serviço']
 const PHASES = ['Todos', 'Fase 5', 'Fase 6', 'Fase 7']
@@ -589,7 +590,7 @@ export default function MoveisScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={[s.searchBtn, { backgroundColor: '#3B82F6' }]}
-                      onPress={() => Linking.openURL(result.permalink)}
+                      onPress={() => Linking.openURL(getMercadoLivreUrl(result.permalink))}
                     >
                       <Ionicons name="open-outline" size={18} color="#fff" />
                     </TouchableOpacity>
@@ -605,18 +606,18 @@ export default function MoveisScreen() {
               Toque para abrir a busca no site da loja
             </Text>
             {[
-              { name: 'Casas Bahia', color: '#003DA5', url: `https://www.casasbahia.com.br/busca/${encodeURIComponent(searchQuery)}` },
-              { name: 'Magazine Luiza', color: '#CC092F', url: `https://www.magazineluiza.com.br/busca/${encodeURIComponent(searchQuery)}/` },
-              { name: 'MadeiraMadeira', color: '#2E7D32', url: `https://www.madeiramadeira.com.br/busca/?q=${encodeURIComponent(searchQuery)}` },
-              { name: 'Tok&Stok', color: '#C8973A', url: `https://www.tokstok.com.br/busca?q=${encodeURIComponent(searchQuery)}` },
-              { name: 'Leroy Merlin', color: '#78BE20', url: `https://www.leroymerlin.com.br/pesquisa/?q=${encodeURIComponent(searchQuery)}` },
-              { name: 'Shopee', color: '#EE4D2D', url: `https://shopee.com.br/search?keyword=${encodeURIComponent(searchQuery)}` },
-              { name: 'Google Shopping', color: '#4285F4', url: `https://www.google.com.br/search?q=${encodeURIComponent(searchQuery)}&tbm=shop` },
+              { name: 'Casas Bahia',    color: '#003DA5', key: 'casasBahia' },
+              { name: 'Magazine Luiza', color: '#CC092F', key: 'magazineLuiza' },
+              { name: 'MadeiraMadeira', color: '#2E7D32', key: 'madeiraMadeira' },
+              { name: 'Tok&Stok',       color: '#C8973A', key: 'tokStok' },
+              { name: 'Leroy Merlin',   color: '#78BE20', key: 'leroyMerlin' },
+              { name: 'Shopee',         color: '#EE4D2D', key: 'shopee' },
+              { name: 'Google Shopping',color: '#4285F4', key: 'google' },
             ].map(store => (
               <TouchableOpacity
                 key={store.name}
                 style={[s.storeBtn, { borderLeftColor: store.color }]}
-                onPress={() => Linking.openURL(store.url)}
+                onPress={() => Linking.openURL(getStoreSearchUrl(store.key, searchQuery))}
               >
                 <View style={[s.storeDot, { backgroundColor: store.color }]} />
                 <Text style={s.storeBtnTxt}>{store.name}</Text>
