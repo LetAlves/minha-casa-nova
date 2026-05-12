@@ -5,7 +5,18 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "ios": {
+      "bundleIdentifier": "com.letalves.minhacasanova",
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Precisamos de acesso à galeria para adicionar fotos aos itens.",
+        "NSCameraUsageDescription": "Precisamos de acesso à câmera para tirar fotos dos itens."
+      }
+    },
     "android": {
+      "package": "com.letalves.minhacasanova",
+      "versionCode": 1,
       "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"]
     },
     "plugins": ["expo-image-picker"]
