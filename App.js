@@ -23,7 +23,7 @@ function AppTabs() {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
-          tabBarActiveTintColor: '#E07A5F',
+          tabBarActiveTintColor: '#C9A84C',
           tabBarInactiveTintColor: '#9CA3AF',
           tabBarStyle: {
             backgroundColor: '#fff',

@@ -90,7 +90,7 @@ export default function LoginScreen() {
       <ScrollView contentContainerStyle={s.scroll} keyboardShouldPersistTaps="handled">
         <View style={s.header}>
           <View style={s.iconWrap}>
-            <Ionicons name="home" size={40} color="#E07A5F" />
+            <Ionicons name="home" size={40} color="#C9A84C" />
           </View>
           <Text style={s.title}>Minha Casa Nova</Text>
           <Text style={s.subtitle}>Organize tudo em um só lugar</Text>
@@ -167,14 +167,14 @@ export default function LoginScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAF7F2' },
+  container: { flex: 1, backgroundColor: '#F5F5F0' },
   scroll: { flexGrow: 1, justifyContent: 'center', padding: 24, paddingTop: 60 },
   header: { alignItems: 'center', marginBottom: 36 },
   iconWrap: {
     width: 84, height: 84, borderRadius: 42,
-    backgroundColor: '#FFF5F2', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: '#F5F5F0', alignItems: 'center', justifyContent: 'center',
     marginBottom: 16,
-    shadowColor: '#E07A5F', shadowOffset: { width: 0, height: 4 },
+    shadowColor: '#C9A84C', shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.18, shadowRadius: 12, elevation: 4,
   },
   title: { fontSize: 26, fontWeight: '700', color: '#1F2937', marginBottom: 6 },
@@ -195,15 +195,15 @@ const s = StyleSheet.create({
   input: { flex: 1, fontSize: 15, color: '#1F2937' },
   eyeBtn: { padding: 4 },
   btn: {
-    backgroundColor: '#E07A5F', borderRadius: 12, height: 52,
+    backgroundColor: '#C9A84C', borderRadius: 12, height: 52,
     alignItems: 'center', justifyContent: 'center', marginTop: 8,
-    shadowColor: '#E07A5F', shadowOffset: { width: 0, height: 4 },
+    shadowColor: '#C9A84C', shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3, shadowRadius: 8, elevation: 4,
   },
   btnTxt: { color: '#fff', fontSize: 16, fontWeight: '700' },
   toggleRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20 },
   toggleTxt: { fontSize: 14, color: '#6B7280' },
-  toggleLink: { fontSize: 14, fontWeight: '700', color: '#E07A5F' },
+  toggleLink: { fontSize: 14, fontWeight: '700', color: '#C9A84C' },
   forgotBtn: { alignItems: 'center', marginTop: 12 },
   forgotTxt: { fontSize: 13, color: '#9CA3AF', textDecorationLine: 'underline' },
   footer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 32 },

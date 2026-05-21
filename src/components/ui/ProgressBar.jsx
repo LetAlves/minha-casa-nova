@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 
-export default function ProgressBar({ value = 0, color = '#E07A5F', label, showPercent = true, height = 8 }) {
+export default function ProgressBar({ value = 0, color = '#C9A84C', label, showPercent = true, height = 8 }) {
   const pct = Math.min(Math.max(value, 0), 100)
   return (
     <View>

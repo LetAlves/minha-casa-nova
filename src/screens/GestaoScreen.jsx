@@ -91,13 +91,13 @@ function MiniCalendar({ appointments, onDayPress, selectedDay }) {
     <View style={{ backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 12, elevation: 2 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
         <TouchableOpacity onPress={prevMonth} style={{ padding: 4 }}>
-          <Ionicons name="chevron-back" size={20} color="#E07A5F" />
+          <Ionicons name="chevron-back" size={20} color="#C9A84C" />
         </TouchableOpacity>
         <Text style={{ fontWeight: '800', color: '#1F2937', fontSize: 15 }}>
           {MONTH_NAMES[month]} {year}
         </Text>
         <TouchableOpacity onPress={nextMonth} style={{ padding: 4 }}>
-          <Ionicons name="chevron-forward" size={20} color="#E07A5F" />
+          <Ionicons name="chevron-forward" size={20} color="#C9A84C" />
         </TouchableOpacity>
       </View>
       <View style={{ flexDirection: 'row', marginBottom: 4 }}>
@@ -116,7 +116,7 @@ function MiniCalendar({ appointments, onDayPress, selectedDay }) {
             {cell ? (
               <View style={[
                 { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
-                isToday(cell) && { backgroundColor: '#E07A5F' },
+                isToday(cell) && { backgroundColor: '#C9A84C' },
                 selectedDay?.day === cell && selectedDay?.month === month && !isToday(cell) && { backgroundColor: '#FEF3C7' },
               ]}>
                 <Text style={[
@@ -126,7 +126,7 @@ function MiniCalendar({ appointments, onDayPress, selectedDay }) {
                   {cell}
                 </Text>
                 {apptDays.has(cell) && (
-                  <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#E07A5F', position: 'absolute', bottom: 2 }} />
+                  <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#C9A84C', position: 'absolute', bottom: 2 }} />
                 )}
               </View>
             ) : <View style={{ width: 30, height: 30 }} />}
@@ -161,7 +161,7 @@ export default function GestaoScreen() {
   if (!loaded) {
     return (
       <SafeAreaView style={s.container}>
-        <ActivityIndicator size="large" color="#E07A5F" style={{ marginTop: 80 }} />
+        <ActivityIndicator size="large" color="#C9A84C" style={{ marginTop: 80 }} />
       </SafeAreaView>
     )
   }
@@ -296,7 +296,7 @@ export default function GestaoScreen() {
   return (
     <SafeAreaView style={s.container} edges={['top']}>
       <View style={s.header}>
-        <Text style={s.headerTitle}>📋 Gestão</Text>
+        <Text style={s.headerTitle}>Gestão</Text>
       </View>
       {/* Tab bar */}
       <View style={s.tabScroll}>
@@ -317,7 +317,7 @@ export default function GestaoScreen() {
             data={orders}
             keyExtractor={item => item.id}
             renderItem={({ item: order }) => (
-              <View style={[s.card, { borderLeftWidth: 4, borderLeftColor: order.status === 'entregue' ? '#22C55E' : '#E07A5F' }]}>
+              <View style={[s.card, { borderLeftWidth: 4, borderLeftColor: order.status === 'entregue' ? '#22C55E' : '#C9A84C' }]}>
                 <View style={s.row}>
                   <View style={{ flex: 1 }}>
                     <Text style={s.itemName}>{order.item}</Text>
@@ -395,7 +395,7 @@ export default function GestaoScreen() {
               </View>
             )}
 
-            <Text style={s.sectionTitle}>📅 Próximos Compromissos</Text>
+            <Text style={s.sectionTitle}>Próximos Compromissos</Text>
             {upcomingAppts.length === 0
               ? <EmptyState icon="📅" title="Nenhum compromisso" message="Adicione compromissos à agenda." />
               : upcomingAppts.map(appt => (
@@ -486,7 +486,7 @@ export default function GestaoScreen() {
                 </View>
               ))}
             </View>
-            <ProgressBar value={budgetPct} color="#E07A5F" label={`Pago: ${budgetPct}% do total`} height={10} />
+            <ProgressBar value={budgetPct} color="#C9A84C" label={`Pago: ${budgetPct}% do total`} height={10} />
           </View>
 
           {/* Reset */}
@@ -551,7 +551,7 @@ export default function GestaoScreen() {
                     {isOver && <Text style={{ fontSize: 11, color: '#DC2626', fontWeight: '700' }}>⚠️ Acima do planejado</Text>}
                   </View>
                   <TouchableOpacity onPress={() => handleEditBudgetPhase(key)} style={{ padding: 4 }}>
-                    <Ionicons name="pencil" size={16} color="#E07A5F" />
+                    <Ionicons name="pencil" size={16} color="#C9A84C" />
                   </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
@@ -619,8 +619,8 @@ export default function GestaoScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
             {receiptPhoto ? <Image source={{ uri: receiptPhoto }} style={{ width: 60, height: 60, borderRadius: 8 }} /> : null}
             <TouchableOpacity onPress={pickReceiptImage} style={s.addPhotoBtn}>
-              <Ionicons name="camera" size={22} color="#E07A5F" />
-              <Text style={{ fontSize: 11, color: '#E07A5F', marginTop: 2 }}>Foto</Text>
+              <Ionicons name="camera" size={22} color="#C9A84C" />
+              <Text style={{ fontSize: 11, color: '#C9A84C', marginTop: 2 }}>Foto</Text>
             </TouchableOpacity>
           </View>
           <TouchableOpacity style={s.saveBtn} onPress={handleAddWarranty}>
@@ -677,15 +677,15 @@ export default function GestaoScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAF7F2' },
+  container: { flex: 1, backgroundColor: '#F5F5F0' },
   header: { backgroundColor: '#fff', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: '#3D405B' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: '#2C2C2C' },
   tabScroll: { backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  tabBtn: (active) => ({ flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: active ? '#E07A5F' : '#F3F4F6' }),
+  tabBtn: (active) => ({ flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: active ? '#C9A84C' : '#F3F4F6' }),
   tabBtnTxt: (active) => ({ color: active ? '#fff' : '#6B7280', fontWeight: '700', fontSize: 13 }),
   row: { flexDirection: 'row', alignItems: 'center' },
   card: { backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 12, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 4 },
-  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#3D405B', marginBottom: 12 },
+  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#2C2C2C', marginBottom: 12 },
   itemName: { fontSize: 15, fontWeight: '700', color: '#1F2937' },
   itemMeta: { fontSize: 12, color: '#6B7280', marginTop: 2 },
   typeBadge: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 3 },
@@ -697,12 +697,12 @@ const s = StyleSheet.create({
   budgetCardLbl: { fontSize: 11, color: '#6B7280', marginTop: 2 },
   label: { fontSize: 12, fontWeight: '700', color: '#6B7280', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
   input: { borderWidth: 1.5, borderColor: '#E5E7EB', borderRadius: 12, padding: 12, fontSize: 15, color: '#1F2937', backgroundColor: '#FAFAFA', marginBottom: 12 },
-  saveBtn: { backgroundColor: '#E07A5F', borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 8 },
+  saveBtn: { backgroundColor: '#C9A84C', borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 8 },
   saveBtnTxt: { color: '#fff', fontWeight: '800', fontSize: 16 },
-  fab: { position: 'absolute', bottom: 22, right: 22, width: 58, height: 58, borderRadius: 29, backgroundColor: '#E07A5F', alignItems: 'center', justifyContent: 'center', elevation: 6 },
-  exportBtn: { position: 'absolute', bottom: 90, right: 22, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#3D405B', borderRadius: 24, paddingHorizontal: 16, paddingVertical: 10, elevation: 5 },
+  fab: { position: 'absolute', bottom: 22, right: 22, width: 58, height: 58, borderRadius: 29, backgroundColor: '#C9A84C', alignItems: 'center', justifyContent: 'center', elevation: 6 },
+  exportBtn: { position: 'absolute', bottom: 90, right: 22, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#2C2C2C', borderRadius: 24, paddingHorizontal: 16, paddingVertical: 10, elevation: 5 },
   exportBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 13 },
-  chip: (active) => ({ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, backgroundColor: active ? '#E07A5F' : '#F3F4F6' }),
+  chip: (active) => ({ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, backgroundColor: active ? '#C9A84C' : '#F3F4F6' }),
   chipTxt: (active) => ({ color: active ? '#fff' : '#6B7280', fontWeight: '700', fontSize: 13 }),
-  addPhotoBtn: { width: 70, height: 70, borderRadius: 8, borderWidth: 2, borderColor: '#E07A5F', borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
+  addPhotoBtn: { width: 70, height: 70, borderRadius: 8, borderWidth: 2, borderColor: '#C9A84C', borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
 })

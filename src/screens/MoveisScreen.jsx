@@ -142,7 +142,7 @@ function ItemForm({ form, setForm, onSave, onPickImage }) {
           </TouchableOpacity>
         ))}
         <TouchableOpacity onPress={onPickImage} style={s.addPhotoBtn}>
-          <Ionicons name="camera" size={24} color="#E07A5F" />
+          <Ionicons name="camera" size={24} color="#C9A84C" />
         </TouchableOpacity>
       </View>
 
@@ -174,7 +174,7 @@ export default function MoveisScreen() {
   if (!loaded) {
     return (
       <SafeAreaView style={s.container}>
-        <ActivityIndicator size="large" color="#E07A5F" style={{ marginTop: 80 }} />
+        <ActivityIndicator size="large" color="#C9A84C" style={{ marginTop: 80 }} />
       </SafeAreaView>
     )
   }
@@ -412,7 +412,7 @@ export default function MoveisScreen() {
               <TouchableOpacity style={[s.actionBtn, { backgroundColor: '#3B82F6' }]} onPress={() => openPriceModal(items.find(i => i.id === item.id))}>
                 <Text style={s.actionBtnTxt}>Preços</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[s.actionBtn, { backgroundColor: '#E07A5F' }]} onPress={() => handleEdit(item)}>
+              <TouchableOpacity style={[s.actionBtn, { backgroundColor: '#C9A84C' }]} onPress={() => handleEdit(item)}>
                 <Text style={s.actionBtnTxt}>Editar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[s.actionBtn, { backgroundColor: '#EF4444' }]} onPress={() => handleDelete(item)}>
@@ -444,7 +444,7 @@ export default function MoveisScreen() {
       <View style={{ backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' }}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 54 }} contentContainerStyle={{ paddingHorizontal: 16, alignItems: 'center', height: 54 }}>
           {PHASES.map(p => (
-            <TouchableOpacity key={p} style={[s.chip(phaseFilter === p), { marginRight: 6, backgroundColor: phaseFilter === p ? '#3D405B' : '#F3F4F6' }]} onPress={() => setPhaseFilter(p)}>
+            <TouchableOpacity key={p} style={[s.chip(phaseFilter === p), { marginRight: 6, backgroundColor: phaseFilter === p ? '#2C2C2C' : '#F3F4F6' }]} onPress={() => setPhaseFilter(p)}>
               <Text style={s.chipTxt(phaseFilter === p)}>{p}</Text>
             </TouchableOpacity>
           ))}
@@ -480,7 +480,7 @@ export default function MoveisScreen() {
               <View key={room} style={[s.card, { flexDirection: 'row', alignItems: 'center' }]}>
                 <Text style={{ flex: 1, fontWeight: '700', color: '#1F2937' }}>{room}</Text>
                 <Text style={{ color: '#6B7280', fontSize: 12, marginRight: 10 }}>{data.comprado}/{data.count} comprados</Text>
-                <Text style={{ fontWeight: '800', color: '#E07A5F' }}>{formatCurrency(data.total)}</Text>
+                <Text style={{ fontWeight: '800', color: '#C9A84C' }}>{formatCurrency(data.total)}</Text>
               </View>
             ))}
           </View>
@@ -548,7 +548,7 @@ export default function MoveisScreen() {
                 onSubmitEditing={() => searchPrices(searchQuery)}
               />
               <TouchableOpacity
-                style={{ backgroundColor: '#E07A5F', borderRadius: 12, paddingHorizontal: 14, justifyContent: 'center' }}
+                style={{ backgroundColor: '#C9A84C', borderRadius: 12, paddingHorizontal: 14, justifyContent: 'center' }}
                 onPress={() => searchPrices(searchQuery)}
               >
                 {searching
@@ -560,7 +560,7 @@ export default function MoveisScreen() {
 
             {searching && (
               <View style={{ alignItems: 'center', paddingVertical: 20 }}>
-                <ActivityIndicator color="#E07A5F" size="large" />
+                <ActivityIndicator color="#C9A84C" size="large" />
                 <Text style={{ color: '#6B7280', marginTop: 8, fontSize: 13 }}>Buscando preços...</Text>
               </View>
             )}
@@ -583,7 +583,7 @@ export default function MoveisScreen() {
                   </View>
                   <View style={{ gap: 6 }}>
                     <TouchableOpacity
-                      style={[s.searchBtn, { backgroundColor: alreadyAdded ? '#D1FAE5' : '#E07A5F' }]}
+                      style={[s.searchBtn, { backgroundColor: alreadyAdded ? '#D1FAE5' : '#C9A84C' }]}
                       onPress={() => !alreadyAdded && handleAddSearchResult(result)}
                     >
                       <Ionicons name={alreadyAdded ? 'checkmark' : 'add'} size={18} color={alreadyAdded ? '#065F46' : '#fff'} />
@@ -632,40 +632,40 @@ export default function MoveisScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAF7F2' },
+  container: { flex: 1, backgroundColor: '#F5F5F0' },
   header: { backgroundColor: '#fff', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: '#3D405B' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: '#2C2C2C' },
   filterScroll: { backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  chip: (active) => ({ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, backgroundColor: active ? '#E07A5F' : '#F3F4F6' }),
+  chip: (active) => ({ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, backgroundColor: active ? '#C9A84C' : '#F3F4F6' }),
   chipTxt: (active) => ({ color: active ? '#fff' : '#6B7280', fontWeight: '700', fontSize: 13 }),
   statsRow: { flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 10, gap: 10 },
   statCard: { flex: 1, backgroundColor: '#fff', borderRadius: 12, padding: 12, alignItems: 'center', elevation: 1 },
-  statVal: { fontSize: 14, fontWeight: '800', color: '#E07A5F' },
+  statVal: { fontSize: 14, fontWeight: '800', color: '#C9A84C' },
   statLbl: { fontSize: 11, color: '#6B7280', marginTop: 2 },
   row: { flexDirection: 'row', alignItems: 'center' },
   card: { backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 12, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 4 },
-  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#3D405B', marginBottom: 12 },
+  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#2C2C2C', marginBottom: 12 },
   itemName: { fontSize: 15, fontWeight: '700', color: '#1F2937' },
-  itemPrice: { fontSize: 14, fontWeight: '700', color: '#E07A5F', marginTop: 2 },
+  itemPrice: { fontSize: 14, fontWeight: '700', color: '#C9A84C', marginTop: 2 },
   roomChip: { backgroundColor: '#EDE9FE', borderRadius: 20, paddingHorizontal: 8, paddingVertical: 2 },
   roomChipTxt: { color: '#7C3AED', fontSize: 11, fontWeight: '700' },
   detailTxt: { fontSize: 13, color: '#6B7280' },
   offerRow: { borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 10, padding: 10, marginBottom: 8, flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff' },
   offerStore: { fontSize: 14, fontWeight: '700', color: '#1F2937' },
   offerDetail: { fontSize: 12, color: '#6B7280', marginTop: 2 },
-  offerTotal: { fontSize: 15, fontWeight: '800', color: '#E07A5F' },
+  offerTotal: { fontSize: 15, fontWeight: '800', color: '#C9A84C' },
   actionBtn: { borderRadius: 10, paddingHorizontal: 12, paddingVertical: 8, flex: 1, alignItems: 'center' },
   actionBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 12 },
   label: { fontSize: 12, fontWeight: '700', color: '#6B7280', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
   input: { borderWidth: 1.5, borderColor: '#E5E7EB', borderRadius: 12, padding: 12, fontSize: 15, color: '#1F2937', backgroundColor: '#FAFAFA', marginBottom: 12 },
-  saveBtn: { backgroundColor: '#E07A5F', borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 8 },
+  saveBtn: { backgroundColor: '#C9A84C', borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 8 },
   saveBtnTxt: { color: '#fff', fontWeight: '800', fontSize: 16 },
-  fab: { position: 'absolute', bottom: 22, right: 22, width: 58, height: 58, borderRadius: 29, backgroundColor: '#E07A5F', alignItems: 'center', justifyContent: 'center', elevation: 6 },
-  addPhotoBtn: { width: 70, height: 70, borderRadius: 8, borderWidth: 2, borderColor: '#E07A5F', borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
+  fab: { position: 'absolute', bottom: 22, right: 22, width: 58, height: 58, borderRadius: 29, backgroundColor: '#C9A84C', alignItems: 'center', justifyContent: 'center', elevation: 6 },
+  addPhotoBtn: { width: 70, height: 70, borderRadius: 8, borderWidth: 2, borderColor: '#C9A84C', borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
   searchResultRow: { flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 12, padding: 10, marginBottom: 10, backgroundColor: '#fff' },
   searchThumb: { width: 56, height: 56, borderRadius: 8, backgroundColor: '#F3F4F6' },
   searchTitle: { fontSize: 12, fontWeight: '600', color: '#1F2937', lineHeight: 16 },
-  searchPrice: { fontSize: 14, fontWeight: '800', color: '#E07A5F', marginTop: 3 },
+  searchPrice: { fontSize: 14, fontWeight: '800', color: '#C9A84C', marginTop: 3 },
   searchStore: { fontSize: 11, color: '#6B7280', marginTop: 2 },
   searchBtn: { width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   storeBtn: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#E5E7EB', borderLeftWidth: 4, padding: 14, marginBottom: 8 },

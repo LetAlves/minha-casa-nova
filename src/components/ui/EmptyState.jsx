@@ -21,6 +21,6 @@ const s = StyleSheet.create({
   icon: { fontSize: 52, marginBottom: 12 },
   title: { fontSize: 17, fontWeight: '700', color: '#1F2937', marginBottom: 8, textAlign: 'center' },
   message: { fontSize: 14, color: '#6B7280', textAlign: 'center', lineHeight: 20 },
-  btn: { marginTop: 20, backgroundColor: '#E07A5F', borderRadius: 12, paddingHorizontal: 24, paddingVertical: 12 },
+  btn: { marginTop: 20, backgroundColor: '#C9A84C', borderRadius: 12, paddingHorizontal: 24, paddingVertical: 12 },
   btnTxt: { color: '#fff', fontWeight: '700', fontSize: 15 },
 })

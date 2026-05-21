@@ -86,8 +86,8 @@ function CalcPisoModal({ calcFloor, setCalcFloor, calcRooms, addCalcRoom, remove
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4, marginBottom: 8 }}>
         <Text style={s.sectionTitle}>Cômodos</Text>
         <TouchableOpacity onPress={addCalcRoom} style={s.addSmallBtn}>
-          <Ionicons name="add" size={18} color="#E07A5F" />
-          <Text style={{ color: '#E07A5F', fontWeight: '700', fontSize: 13 }}>Cômodo</Text>
+          <Ionicons name="add" size={18} color="#C9A84C" />
+          <Text style={{ color: '#C9A84C', fontWeight: '700', fontSize: 13 }}>Cômodo</Text>
         </TouchableOpacity>
       </View>
 
@@ -120,7 +120,7 @@ function CalcPisoModal({ calcFloor, setCalcFloor, calcRooms, addCalcRoom, remove
               </View>
               <View style={{ alignItems: 'flex-end', paddingBottom: 10 }}>
                 <Text style={s.calcRoomLabel}>Área</Text>
-                <Text style={{ fontWeight: '800', color: '#E07A5F', fontSize: 15 }}>{area.toFixed(2)} m²</Text>
+                <Text style={{ fontWeight: '800', color: '#C9A84C', fontSize: 15 }}>{area.toFixed(2)} m²</Text>
               </View>
             </View>
           </View>
@@ -140,7 +140,7 @@ function CalcPisoModal({ calcFloor, setCalcFloor, calcRooms, addCalcRoom, remove
         <View style={{ height: 1, backgroundColor: 'rgba(255,255,255,0.15)', marginVertical: 8 }} />
         <View style={s.calcResultRow}>
           <Text style={[s.calcResultLabel, { fontSize: 15 }]}>Total estimado</Text>
-          <Text style={[s.calcResultVal, { color: '#E07A5F', fontSize: 22, fontWeight: '900' }]}>
+          <Text style={[s.calcResultVal, { color: '#C9A84C', fontSize: 22, fontWeight: '900' }]}>
             {formatCurrency(totalCost)}
           </Text>
         </View>
@@ -166,7 +166,7 @@ function ObraItemForm({ form, setForm, onSave, onAddPhoto }) {
       <Text style={s.label}>Status</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
         {STATUS_OPTIONS.map(opt => (
-          <TouchableOpacity key={opt.value} style={[s.tabBtn(form.status === opt.value, '#E07A5F')]} onPress={() => setForm(f => ({ ...f, status: opt.value }))}>
+          <TouchableOpacity key={opt.value} style={[s.tabBtn(form.status === opt.value, '#C9A84C')]} onPress={() => setForm(f => ({ ...f, status: opt.value }))}>
             <Text style={s.tabBtnTxt(form.status === opt.value)}>{opt.label}</Text>
           </TouchableOpacity>
         ))}
@@ -201,7 +201,7 @@ function ObraItemForm({ form, setForm, onSave, onAddPhoto }) {
           </TouchableOpacity>
         ))}
         <TouchableOpacity onPress={onAddPhoto} style={s.addPhotoBtn}>
-          <Ionicons name="camera" size={24} color="#E07A5F" />
+          <Ionicons name="camera" size={24} color="#C9A84C" />
         </TouchableOpacity>
       </View>
 
@@ -234,7 +234,7 @@ export default function ObraScreen() {
   if (!loaded) {
     return (
       <SafeAreaView style={s.container}>
-        <ActivityIndicator size="large" color="#E07A5F" style={{ marginTop: 80 }} />
+        <ActivityIndicator size="large" color="#C9A84C" style={{ marginTop: 80 }} />
       </SafeAreaView>
     )
   }
@@ -453,7 +453,7 @@ export default function ObraScreen() {
   return (
     <SafeAreaView style={s.container} edges={['top']}>
       <View style={s.header}>
-        <Text style={s.headerTitle}>🔨 Obra & Construção</Text>
+        <Text style={s.headerTitle}>Obra & Construção</Text>
       </View>
       {/* Tab selector */}
       <View style={{ backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' }}>
@@ -491,9 +491,9 @@ export default function ObraScreen() {
         {/* Items list */}
         <View style={{ paddingHorizontal: 16, marginTop: 12 }}>
           <TouchableOpacity style={s.calcBtn} onPress={openCalc}>
-            <Ionicons name="calculator-outline" size={18} color="#E07A5F" />
+            <Ionicons name="calculator-outline" size={18} color="#C9A84C" />
             <Text style={s.calcBtnTxt}>Calculadora de Piso</Text>
-            <Ionicons name="chevron-forward" size={16} color="#E07A5F" style={{ marginLeft: 'auto' }} />
+            <Ionicons name="chevron-forward" size={16} color="#C9A84C" style={{ marginLeft: 'auto' }} />
           </TouchableOpacity>
 
           {currentPhase.items.length === 0 ? (
@@ -510,10 +510,10 @@ export default function ObraScreen() {
         {/* Profissionais */}
         <View style={{ paddingHorizontal: 16, marginTop: 8 }}>
           <View style={[s.row, { justifyContent: 'space-between', marginBottom: 12 }]}>
-            <Text style={s.sectionTitle}>👷 Profissionais</Text>
+            <Text style={s.sectionTitle}>Profissionais</Text>
             <TouchableOpacity onPress={() => setProfModal(true)} style={s.addSmallBtn}>
-              <Ionicons name="add" size={18} color="#E07A5F" />
-              <Text style={{ color: '#E07A5F', fontWeight: '700', fontSize: 13 }}>Adicionar</Text>
+              <Ionicons name="add" size={18} color="#C9A84C" />
+              <Text style={{ color: '#C9A84C', fontWeight: '700', fontSize: 13 }}>Adicionar</Text>
             </TouchableOpacity>
           </View>
           {professionals.length === 0 ? (
@@ -542,7 +542,7 @@ export default function ObraScreen() {
 
         {/* Gantt */}
         <View style={{ paddingHorizontal: 16, marginTop: 8 }}>
-          <Text style={s.sectionTitle}>📅 Cronograma</Text>
+          <Text style={s.sectionTitle}>Cronograma</Text>
           <View style={[s.card, { padding: 10 }]}>
             <View style={s.row}>
               <Text style={{ fontSize: 10, color: '#6B7280', flex: 1 }}>Jan/25</Text>
@@ -616,9 +616,9 @@ export default function ObraScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAF7F2' },
+  container: { flex: 1, backgroundColor: '#F5F5F0' },
   header: { backgroundColor: '#fff', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: '#3D405B' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: '#2C2C2C' },
   tabScroll: { backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
   tabBtn: (active, color) => ({ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: active ? color : '#F3F4F6' }),
   tabBtnTxt: (active) => ({ color: active ? '#fff' : '#6B7280', fontWeight: '700', fontSize: 13 }),
@@ -629,22 +629,22 @@ const s = StyleSheet.create({
   circleProgressTxt: { fontSize: 16, fontWeight: '900', color: '#fff' },
   row: { flexDirection: 'row', alignItems: 'center' },
   card: { backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 12, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 4 },
-  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#3D405B', marginBottom: 12 },
+  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#2C2C2C', marginBottom: 12 },
   itemName: { fontSize: 15, fontWeight: '700', color: '#1F2937' },
   itemMeta: { fontSize: 12, color: '#6B7280', marginTop: 2 },
-  itemValue: { fontSize: 14, fontWeight: '700', color: '#E07A5F' },
+  itemValue: { fontSize: 14, fontWeight: '700', color: '#C9A84C' },
   detailTxt: { fontSize: 13, color: '#6B7280' },
-  editBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#E07A5F', borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8, alignSelf: 'flex-start', gap: 6 },
+  editBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#C9A84C', borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8, alignSelf: 'flex-start', gap: 6 },
   editBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 13 },
   addSmallBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, padding: 4 },
-  fab: { position: 'absolute', bottom: 22, right: 22, width: 58, height: 58, borderRadius: 29, backgroundColor: '#E07A5F', alignItems: 'center', justifyContent: 'center', elevation: 6 },
+  fab: { position: 'absolute', bottom: 22, right: 22, width: 58, height: 58, borderRadius: 29, backgroundColor: '#C9A84C', alignItems: 'center', justifyContent: 'center', elevation: 6 },
   label: { fontSize: 12, fontWeight: '700', color: '#6B7280', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
   input: { borderWidth: 1.5, borderColor: '#E5E7EB', borderRadius: 12, padding: 12, fontSize: 15, color: '#1F2937', backgroundColor: '#FAFAFA', marginBottom: 12 },
-  saveBtn: { backgroundColor: '#E07A5F', borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 8 },
+  saveBtn: { backgroundColor: '#C9A84C', borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 8 },
   saveBtnTxt: { color: '#fff', fontWeight: '800', fontSize: 16 },
-  addPhotoBtn: { width: 70, height: 70, borderRadius: 8, borderWidth: 2, borderColor: '#E07A5F', borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
+  addPhotoBtn: { width: 70, height: 70, borderRadius: 8, borderWidth: 2, borderColor: '#C9A84C', borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
   calcBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#FFF5F2', borderRadius: 12, padding: 14, marginBottom: 14, borderWidth: 1, borderColor: '#FDDDD6' },
-  calcBtnTxt: { color: '#E07A5F', fontWeight: '700', fontSize: 14, flex: 1 },
+  calcBtnTxt: { color: '#C9A84C', fontWeight: '700', fontSize: 14, flex: 1 },
   calcImgBtn: { width: 90, height: 90, borderRadius: 10, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center', marginBottom: 14, overflow: 'hidden' },
   calcRoomCard: { backgroundColor: '#F9FAFB', borderRadius: 12, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: '#E5E7EB' },
   calcRoomLabel: { fontSize: 11, color: '#6B7280', marginBottom: 4, fontWeight: '600' },

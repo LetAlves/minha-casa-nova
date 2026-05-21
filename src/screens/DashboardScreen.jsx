@@ -11,7 +11,7 @@ import BaseModal from '../components/modals/BaseModal'
 import { calcPhaseProgress, calcOverallBudget } from '../utils/budget'
 import { formatDate, formatCurrency, isOverdue, daysUntil } from '../utils/dates'
 
-const PHASE_COLORS = ['#E07A5F', '#F2A65A', '#C77D5A', '#81B29A', '#3D405B', '#E07A5F', '#81B29A']
+const PHASE_COLORS = ['#C9A84C', '#F2A65A', '#C77D5A', '#81B29A', '#2C2C2C', '#C9A84C', '#81B29A']
 const PHASE_NAMES = {
   1: 'Obra Bruta', 2: 'Acabamento', 3: 'Marcenaria', 4: 'Instalações Finais',
   5: 'Móveis', 6: 'Eletrodomésticos', 7: 'Decoração',
@@ -42,7 +42,7 @@ export default function DashboardScreen() {
   if (!loaded) {
     return (
       <SafeAreaView style={s.container}>
-        <ActivityIndicator size="large" color="#E07A5F" style={{ marginTop: 80 }} />
+        <ActivityIndicator size="large" color="#C9A84C" style={{ marginTop: 80 }} />
       </SafeAreaView>
     )
   }
@@ -123,14 +123,14 @@ export default function DashboardScreen() {
 
         {/* Header */}
         <View style={s.header}>
-          <Text style={s.headerTitle}>🏠 Minha Casa Nova</Text>
+          <Text style={s.headerTitle}>Minha Casa Nova</Text>
           <View style={s.headerDatesRow}>
             <View style={{ flex: 1 }}>
               <Text style={s.headerDate}>Início: {formatDate(timeline.startDate)}</Text>
               <Text style={s.headerDate}>Meta: {formatDate(timeline.targetDate)}</Text>
             </View>
             <TouchableOpacity onPress={openEdit} style={s.editDateBtn}>
-              <Ionicons name="pencil" size={14} color="#E07A5F" />
+              <Ionicons name="pencil" size={14} color="#C9A84C" />
               <Text style={s.editDateTxt}>Editar</Text>
             </TouchableOpacity>
           </View>
@@ -146,7 +146,7 @@ export default function DashboardScreen() {
         {/* Overall Progress */}
         <View style={s.card}>
           <Text style={s.sectionTitle}>Progresso Geral</Text>
-          <ProgressBar value={overallPercent} color="#E07A5F" label={`${allDone} de ${allTotal} itens concluídos`} height={12} />
+          <ProgressBar value={overallPercent} color="#C9A84C" label={`${allDone} de ${allTotal} itens concluídos`} height={12} />
           <View style={{ marginTop: 12 }}>
             <ProgressBar value={timePercent} color="#81B29A" label="Progresso do prazo" height={8} />
           </View>
@@ -198,7 +198,7 @@ export default function DashboardScreen() {
         {/* Alerts */}
         {overdueItems.length > 0 && (
           <View style={s.card}>
-            <Text style={[s.sectionTitle, { color: '#DC2626' }]}>⚠️ Itens Atrasados</Text>
+            <Text style={[s.sectionTitle, { color: '#DC2626' }]}>Itens Atrasados</Text>
             {overdueItems.map(item => (
               <View key={item.id} style={s.alertItem}>
                 <Text style={s.alertName}>{item.name}</Text>
@@ -211,7 +211,7 @@ export default function DashboardScreen() {
         {/* Next Tasks */}
         {pendingTasks.length > 0 && (
           <View style={s.card}>
-            <Text style={s.sectionTitle}>📋 Próximas Tarefas</Text>
+            <Text style={s.sectionTitle}>Próximas Tarefas</Text>
             {pendingTasks.map(task => {
               const d = daysUntil(task.endDate)
               return (
@@ -267,20 +267,20 @@ export default function DashboardScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAF7F2' },
-  header: { backgroundColor: '#E07A5F', padding: 20, paddingTop: 12 },
+  container: { flex: 1, backgroundColor: '#F5F5F0' },
+  header: { backgroundColor: '#2C2C2C', padding: 20, paddingTop: 12 },
   headerTitle: { fontSize: 24, fontWeight: '900', color: '#fff', marginBottom: 8 },
   headerDatesRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   headerDate: { color: 'rgba(255,255,255,0.9)', fontSize: 13, marginBottom: 2 },
   editDateBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: '#fff', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6,
+    backgroundColor: '#C9A84C', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6,
   },
-  editDateTxt: { fontSize: 12, fontWeight: '700', color: '#E07A5F' },
+  editDateTxt: { fontSize: 12, fontWeight: '700', color: '#fff' },
   daysLeftBadge: { backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 20, paddingHorizontal: 12, paddingVertical: 4, alignSelf: 'flex-start' },
   daysLeftTxt: { color: '#fff', fontWeight: '700', fontSize: 13 },
   card: { backgroundColor: '#fff', borderRadius: 14, padding: 14, marginHorizontal: 16, marginBottom: 12, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 4 },
-  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#3D405B', marginBottom: 12 },
+  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#2C2C2C', marginBottom: 12 },
   row: { flexDirection: 'row', alignItems: 'center' },
   phaseTitle: { fontSize: 14, fontWeight: '700', color: '#1F2937' },
   phaseSubtitle: { fontSize: 12, color: '#6B7280', marginTop: 2 },
@@ -303,7 +303,7 @@ const s = StyleSheet.create({
     borderRadius: 10, paddingHorizontal: 14, height: 48, fontSize: 15, color: '#1F2937',
   },
   saveBtn: {
-    backgroundColor: '#E07A5F', borderRadius: 12, height: 50,
+    backgroundColor: '#C9A84C', borderRadius: 12, height: 50,
     alignItems: 'center', justifyContent: 'center', marginTop: 20,
   },
   saveBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 16 },

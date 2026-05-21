@@ -5,7 +5,7 @@ export const INITIAL_DATA = {
       name: 'Obra Bruta',
       icon: '🏗️',
       phase: 1,
-      color: '#E07A5F',
+      color: '#C9A84C',
       items: [
         { id: 'f1i1', name: 'Demolição e adequações de layout', status: 'concluido', responsible: 'Roberto Pereira', contact: '(11) 99999-1111', contractValue: 5000, paidValue: 5000, startDate: '2025-01-15', endDate: '2025-02-10', notes: 'Concluída sem problemas', photos: [] },
         { id: 'f1i2', name: 'Instalações hidráulicas', status: 'concluido', responsible: 'Hidráulica Souza', contact: '(11) 99999-3333', contractValue: 6000, paidValue: 6000, startDate: '2025-02-11', endDate: '2025-03-10', notes: 'Concluída', photos: [] },

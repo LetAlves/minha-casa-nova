@@ -57,7 +57,7 @@ export default function ChadePanelaScreen() {
   if (!loaded) {
     return (
       <SafeAreaView style={s.container}>
-        <ActivityIndicator size="large" color="#E07A5F" style={{ marginTop: 80 }} />
+        <ActivityIndicator size="large" color="#C9A84C" style={{ marginTop: 80 }} />
       </SafeAreaView>
     )
   }
@@ -251,7 +251,7 @@ export default function ChadePanelaScreen() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleOpenEditGift(gift)}>
-            <Ionicons name="pencil-outline" size={18} color="#E07A5F" />
+            <Ionicons name="pencil-outline" size={18} color="#C9A84C" />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => handleDeleteGift(gift)}>
             <Ionicons name="trash-outline" size={18} color="#EF4444" />
@@ -307,15 +307,15 @@ export default function ChadePanelaScreen() {
   return (
     <SafeAreaView style={s.container} edges={['top']}>
       <View style={s.header}>
-        <Text style={s.headerTitle}>🎁 Chá de Panela</Text>
+        <Text style={s.headerTitle}>Chá de Panela</Text>
       </View>
       {/* Main tabs */}
       <View style={s.mainTabRow}>
         <TouchableOpacity style={[s.mainTab, activeTab === 0 && s.mainTabActive]} onPress={() => setActiveTab(0)}>
-          <Text style={[s.mainTabTxt, activeTab === 0 && s.mainTabTxtActive]}>🎁 Presentes</Text>
+          <Text style={[s.mainTabTxt, activeTab === 0 && s.mainTabTxtActive]}>Presentes</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[s.mainTab, activeTab === 1 && s.mainTabActive]} onPress={() => setActiveTab(1)}>
-          <Text style={[s.mainTabTxt, activeTab === 1 && s.mainTabTxtActive]}>👥 Convidados</Text>
+          <Text style={[s.mainTabTxt, activeTab === 1 && s.mainTabTxtActive]}>Convidados</Text>
         </TouchableOpacity>
       </View>
 
@@ -353,7 +353,7 @@ export default function ChadePanelaScreen() {
           </View>
 
           {/* Filtro por cômodo */}
-          <View style={{ backgroundColor: '#FAF7F2', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' }}>
+          <View style={{ backgroundColor: '#F5F5F0', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' }}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ height: 50 }} contentContainerStyle={{ paddingHorizontal: 16, alignItems: 'center', height: 50 }}>
               {['Todos', ...CATEGORIES].map(cat => (
                 <TouchableOpacity
@@ -521,38 +521,38 @@ export default function ChadePanelaScreen() {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAF7F2' },
+  container: { flex: 1, backgroundColor: '#F5F5F0' },
   header: { backgroundColor: '#fff', paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: '#3D405B' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: '#2C2C2C' },
   mainTabRow: { flexDirection: 'row', backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
   mainTab: { flex: 1, paddingVertical: 14, alignItems: 'center' },
-  mainTabActive: { borderBottomWidth: 3, borderBottomColor: '#E07A5F' },
+  mainTabActive: { borderBottomWidth: 3, borderBottomColor: '#C9A84C' },
   mainTabTxt: { fontSize: 14, fontWeight: '700', color: '#9CA3AF' },
-  mainTabTxtActive: { color: '#E07A5F' },
+  mainTabTxtActive: { color: '#C9A84C' },
   statsRow: { flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 10, gap: 8, backgroundColor: '#fff' },
-  statCard: { flex: 1, alignItems: 'center', backgroundColor: '#FAF7F2', borderRadius: 10, paddingVertical: 8, elevation: 1 },
-  statVal: { fontSize: 15, fontWeight: '800', color: '#E07A5F' },
+  statCard: { flex: 1, alignItems: 'center', backgroundColor: '#F5F5F0', borderRadius: 10, paddingVertical: 8, elevation: 1 },
+  statVal: { fontSize: 15, fontWeight: '800', color: '#C9A84C' },
   statLbl: { fontSize: 10, color: '#6B7280', marginTop: 2 },
   card: { backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 10, elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 4 },
   row: { flexDirection: 'row', alignItems: 'center' },
   itemName: { fontSize: 15, fontWeight: '700', color: '#1F2937' },
   itemMeta: { fontSize: 12, color: '#6B7280', marginTop: 2 },
-  itemValue: { fontSize: 14, fontWeight: '700', color: '#E07A5F', marginTop: 2 },
+  itemValue: { fontSize: 14, fontWeight: '700', color: '#C9A84C', marginTop: 2 },
   reservedTxt: { fontSize: 12, color: '#22C55E', fontWeight: '700', marginTop: 4 },
   catChip: { borderRadius: 20, paddingHorizontal: 8, paddingVertical: 2 },
   catChipTxt: { fontSize: 11, fontWeight: '700' },
   confirmBtn: { width: 38, height: 38, borderRadius: 19, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
   heartBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   guestActionBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 7, flex: 1, justifyContent: 'center' },
-  chip: (active) => ({ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, backgroundColor: active ? '#E07A5F' : '#F3F4F6' }),
+  chip: (active) => ({ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, backgroundColor: active ? '#C9A84C' : '#F3F4F6' }),
   chipTxt: (active) => ({ color: active ? '#fff' : '#6B7280', fontWeight: '700', fontSize: 13 }),
-  roomChip: (active) => ({ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: active ? '#3D405B' : '#EDE9FE' }),
-  roomChipTxt: (active) => ({ color: active ? '#fff' : '#3D405B', fontWeight: '700', fontSize: 12 }),
+  roomChip: (active) => ({ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: active ? '#2C2C2C' : '#EDE9FE' }),
+  roomChipTxt: (active) => ({ color: active ? '#fff' : '#2C2C2C', fontWeight: '700', fontSize: 12 }),
   label: { fontSize: 12, fontWeight: '700', color: '#6B7280', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
   input: { borderWidth: 1.5, borderColor: '#E5E7EB', borderRadius: 12, padding: 12, fontSize: 15, color: '#1F2937', backgroundColor: '#FAFAFA', marginBottom: 12 },
-  saveBtn: { backgroundColor: '#E07A5F', borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 8 },
+  saveBtn: { backgroundColor: '#C9A84C', borderRadius: 14, padding: 16, alignItems: 'center', marginTop: 8 },
   saveBtnTxt: { color: '#fff', fontWeight: '800', fontSize: 16 },
-  fab: { position: 'absolute', bottom: 22, right: 22, width: 58, height: 58, borderRadius: 29, backgroundColor: '#E07A5F', alignItems: 'center', justifyContent: 'center', elevation: 6 },
-  shareBtn: { position: 'absolute', bottom: 90, right: 22, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#3D405B', borderRadius: 24, paddingHorizontal: 16, paddingVertical: 10, elevation: 5 },
+  fab: { position: 'absolute', bottom: 22, right: 22, width: 58, height: 58, borderRadius: 29, backgroundColor: '#C9A84C', alignItems: 'center', justifyContent: 'center', elevation: 6 },
+  shareBtn: { position: 'absolute', bottom: 90, right: 22, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#2C2C2C', borderRadius: 24, paddingHorizontal: 16, paddingVertical: 10, elevation: 5 },
   shareBtnTxt: { color: '#fff', fontWeight: '700', fontSize: 13 },
 })
